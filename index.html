@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="現代風 Pi Node 架設教學：Windows、Docker、路由器後台、Port Forwarding、同步與疑難排解。" />
+  <title>Pi Node Setup Guide｜現代化架設教學</title>
+  <style>
+    :root{
+      --bg:#07111f;
+      --bg-soft:#0c1728;
+      --card:rgba(16,31,51,.72);
+      --card-2:rgba(20,38,62,.82);
+      --line:rgba(255,255,255,.09);
+      --text:#eef5ff;
+      --muted:#9fb0c7;
+      --accent:#f6b73c;
+      --accent-2:#ff8a3d;
+      --green:#53e0a0;
+      --red:#ff7373;
+      --blue:#6ba8ff;
+      --shadow:0 20px 60px rgba(0,0,0,.28);
+      --radius:24px;
+      --max:1180px;
+    }
+    *{box-sizing:border-box;scroll-behavior:smooth}
+    body{margin:0;background:
+      radial-gradient(900px 500px at 75% -10%, rgba(246,183,60,.13), transparent 60%),
+      radial-gradient(700px 450px at 10% 15%, rgba(107,168,255,.12), transparent 58%),
+      var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;line-height:1.65}
+    a{color:inherit;text-decoration:none}
+    .container{width:min(var(--max),calc(100% - 40px));margin:auto}
+    .nav{position:sticky;top:0;z-index:50;background:rgba(7,17,31,.72);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+    .nav-inner{height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.2px}
+    .pi-mark{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:#3e2b00;background:linear-gradient(135deg,var(--accent),#ffe08a);box-shadow:0 8px 28px rgba(246,183,60,.3);font-weight:1000}
+    .nav-links{display:flex;gap:18px;color:var(--muted);font-size:14px}
+    .nav-links a:hover{color:var(--text)}
+    .hero{padding:90px 0 50px}
+    .hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:44px;align-items:center}
+    .eyebrow{display:inline-flex;gap:8px;align-items:center;border:1px solid rgba(246,183,60,.28);background:rgba(246,183,60,.08);color:#ffd67d;border-radius:999px;padding:7px 12px;font-size:13px;font-weight:700}
+    h1{font-size:clamp(44px,7vw,82px);line-height:1.02;letter-spacing:-.055em;margin:18px 0}
+    .gradient{background:linear-gradient(90deg,#fff,#ffd77c 45%,#ff9d5b);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .hero p{font-size:18px;color:var(--muted);max-width:700px}
+    .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+    .btn{border:1px solid var(--line);padding:12px 17px;border-radius:14px;font-weight:800;display:inline-flex;align-items:center;gap:8px;transition:.2s transform,.2s background}
+    .btn:hover{transform:translateY(-2px);background:rgba(255,255,255,.06)}
+    .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#261900;border:none}
+    .hero-card{background:linear-gradient(180deg,rgba(26,46,73,.85),rgba(12,24,41,.86));border:1px solid var(--line);padding:25px;border-radius:var(--radius);box-shadow:var(--shadow);position:relative;overflow:hidden}
+    .hero-card:before{content:"";position:absolute;width:210px;height:210px;border-radius:50%;background:rgba(246,183,60,.14);filter:blur(30px);top:-90px;right:-60px}
+    .terminal{border-radius:18px;border:1px solid var(--line);background:#050b14;overflow:hidden}
+    .terminal-top{padding:11px 14px;border-bottom:1px solid var(--line);display:flex;gap:7px}
+    .dot{width:9px;height:9px;border-radius:50%;background:#45566e}.dot:nth-child(1){background:#ff7272}.dot:nth-child(2){background:#ffc861}.dot:nth-child(3){background:#55dfa0}
+    pre{margin:0;padding:20px;font:13px/1.8 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#d8e6f7;overflow:auto}
+    .section{padding:45px 0}
+    .section-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:24px}
+    .section-head h2{margin:0;font-size:32px;letter-spacing:-.035em}.section-head p{margin:0;color:var(--muted);max-width:650px}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
+    .num{font-size:13px;color:#1d1400;background:linear-gradient(135deg,var(--accent),#ffd97e);font-weight:900;border-radius:999px;padding:5px 9px;display:inline-block;margin-bottom:13px}
+    .card h3{margin:0 0 8px;font-size:19px}.muted{color:var(--muted)}
+    .checklist{display:grid;gap:11px;margin-top:14px}.check{display:flex;gap:10px;align-items:flex-start}.check input{margin-top:5px;accent-color:var(--accent)}
+    .notice{padding:14px 16px;border-radius:14px;border:1px solid rgba(107,168,255,.22);background:rgba(107,168,255,.07);color:#cfe0ff;margin-top:18px;font-size:14px}
+    .warn{border-color:rgba(246,183,60,.25);background:rgba(246,183,60,.07);color:#ffe7ae}.success{border-color:rgba(83,224,160,.23);background:rgba(83,224,160,.07);color:#c6f7e2}
+    .wide{grid-column:1/-1}
+    .ports{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:18px}
+    .port{padding:14px 10px;text-align:center;background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:14px;font:700 14px ui-monospace,monospace}
+    .port.ok{border-color:rgba(83,224,160,.3);color:var(--green)}
+    .code-box{position:relative;margin-top:15px}.copy{position:absolute;top:10px;right:10px;z-index:2;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text);border-radius:9px;padding:7px 10px;cursor:pointer}.copy:hover{background:rgba(255,255,255,.09)}
+    .timeline{display:grid;gap:14px}.step{display:grid;grid-template-columns:46px 1fr;gap:14px;align-items:start}.step-num{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:rgba(246,183,60,.10);border:1px solid rgba(246,183,60,.25);color:#ffd67c;font-weight:900}
+    .step-content{border:1px solid var(--line);background:var(--card);padding:17px 18px;border-radius:18px}.step-content h3{margin:0 0 4px}
+    .faq details{border:1px solid var(--line);background:rgba(255,255,255,.03);border-radius:16px;padding:16px 18px}.faq details+details{margin-top:10px}.faq summary{cursor:pointer;font-weight:800}.faq p{color:var(--muted);margin-bottom:0}
+    .footer{padding:38px 0 65px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);margin-top:35px}.sources a{text-decoration:underline;text-underline-offset:3px}
+    .download-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.download-card{background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02));border:1px solid var(--line);border-radius:18px;padding:18px}.download-card h3{margin:0 0 5px}.download-card .btn{margin-top:12px;width:100%;justify-content:center}.os{display:inline-flex;align-items:center;gap:7px;color:#ffd67d;font-size:12px;font-weight:800;letter-spacing:.04em}.router-guide{display:grid;grid-template-columns:1.05fr .95fr;gap:16px}.router-steps{display:grid;gap:10px}.router-step{display:grid;grid-template-columns:38px 1fr;gap:12px;align-items:start}.router-step .step-num{width:38px;height:38px;border-radius:12px}.gateway-box{background:#050b14;border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:10px}.gateway-box code{font:700 14px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#dcecff}.mini-list{display:grid;gap:7px;margin-top:10px}.mini-list div{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid var(--line)}.tag{display:inline-block;font:800 11px ui-monospace,monospace;padding:4px 7px;border-radius:8px;background:rgba(107,168,255,.1);color:#bcd5ff;border:1px solid rgba(107,168,255,.18)}.small{font-size:13px;color:var(--muted)}
+    .ipconfig-output{margin:0;overflow-x:auto;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:#0b0b0b;padding:14px 16px;color:#d7d7d7;font:13px/1.8 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}.ipconfig-output .gateway-line{display:block;margin:2px -6px;padding:1px 6px;border-radius:5px;background:rgba(246,183,60,.14);outline:1px solid rgba(246,183,60,.35);color:#ffe3a0;font-weight:800}.ipconfig-output .gateway-value{color:#ffd67d}
+    .firewall-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:18px}.firewall-shot{margin:0;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:#111923}.firewall-shot img{display:block;width:100%;height:auto}.firewall-shot figcaption{padding:12px 14px;color:var(--muted);font-size:13px}.firewall-shot figcaption strong{display:block;color:var(--text);margin-bottom:4px}
+    .substeps{display:grid;gap:12px;margin-top:18px}.substep{display:grid;grid-template-columns:34px 1fr;gap:11px;align-items:start}.substep .step-num{width:32px;height:32px;border-radius:10px;font-size:13px}.substep h4{margin:0 0 3px;font-size:15px}.substep p{margin:0;color:var(--muted)}
+    @media(max-width:900px){.download-grid,.router-guide{grid-template-columns:1fr 1fr}}
+    @media(max-width:640px){.download-grid,.router-guide,.firewall-steps{grid-template-columns:1fr}}
+    .progress-wrap{position:fixed;left:0;top:0;width:100%;height:3px;z-index:100;background:transparent}.progress{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+    @media(max-width:900px){.hero-grid{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}.ports{grid-template-columns:repeat(3,1fr)}.nav-links{display:none}}
+    @media(max-width:640px){.container{width:min(100% - 24px,var(--max))}.hero{padding-top:56px}.grid{grid-template-columns:1fr}.ports{grid-template-columns:repeat(2,1fr)}h1{font-size:48px}.section-head{display:block}.section-head p{margin-top:8px}}
+  </style>
+</head>
+<body>
+  <div class="progress-wrap"><div class="progress" id="progress"></div></div>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="#top"><span class="pi-mark">π</span> Pi Node Setup Guide</a>
+      <div class="nav-links">
+        <a href="#requirements">準備</a><a href="#setup">架設</a><a href="#router">路由器</a><a href="#ports">Ports</a><a href="#check">檢查</a><a href="#faq">排錯</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">UPDATED · 2026 / 09</span>
+          <h1>把你的電腦，<span class="gradient">變成 Pi Node。</span></h1>
+          <p>一頁式現代化教學，從環境準備、Pi Desktop、Docker，到 Port 與節點狀態檢查，按照流程一步一步完成。</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="#setup">開始架設 →</a>
+            <a class="btn" href="#ports">先看 Port 設定</a>
+          </div>
+          <div class="notice warn">⚠️ 本教學以目前官方資料為基準。Node 0.6.2 已加入 UPnP 自動 Port 設定；若你的路由器不支援或未開啟 UPnP，再採用手動 Port Forwarding。</div>
+        </div>
+        <div class="hero-card">
+          <div class="terminal">
+            <div class="terminal-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <pre>$ node status
+
+Pi Node        ● READY
+Docker         ● RUNNING
+Network        ● CONNECTED
+Ports          ● CHECK
+
+Next step → keep your node online</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="requirements">
+      <div class="container">
+        <div class="section-head"><div><h2>01 · 事前準備</h2></div><p>先確認電腦、網路與軟體環境，再開始安裝，可以少走很多彎路。</p></div>
+        <div class="grid">
+          <div class="card"><span class="num">CHECK 01</span><h3>Windows 電腦</h3><p class="muted">如果你使用 Windows，建議先完成系統更新，並準備管理員權限，以便安裝 Pi Desktop 與 Docker。</p></div>
+          <div class="card"><span class="num">CHECK 02</span><h3>穩定網路</h3><p class="muted">Node 需要持續與網路通訊。若使用 Wi‑Fi，建議讓電腦固定連線；有條件時可優先使用有線網路。</p></div>
+          <div class="card"><span class="num">CHECK 03</span><h3>磁碟與資源</h3><p class="muted">如果使用 Linux Node，目前官方文件列出的起始需求為 150GB 磁碟空間、4 vCPU、4GB RAM；Windows 版本則以 Node App 實際檢查結果為準。</p></div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <span class="num">DOWNLOAD</span>
+          <h3>Docker 官方下載</h3>
+          <p class="muted">Pi Node 的部分環境會用到 Docker。請只從 Docker 官方網站下載，避免使用第三方重包安裝檔。</p>
+          <div class="download-grid">
+            <div class="download-card"><span class="os">▣ WINDOWS</span><h3>Docker Desktop</h3><p class="small">Windows 版本，適合一般 PC 使用。</p><a class="btn btn-primary" target="_blank" rel="noopener" href="https://docs.docker.com/get-started/get-docker/">官方下載／安裝 ↗</a></div>
+            <div class="download-card"><span class="os">◫ MAC</span><h3>Docker Desktop</h3><p class="small">macOS 官方版本，依你的晶片選擇安裝方式。</p><a class="btn" target="_blank" rel="noopener" href="https://docs.docker.com/get-started/get-docker/">官方下載／安裝 ↗</a></div>
+            <div class="download-card"><span class="os">◩ LINUX</span><h3>Docker Engine</h3><p class="small">Linux 可安裝 Docker Engine；Pi 另有 Linux Node 官方安裝流程。</p><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" target="_blank" rel="noopener" href="https://docs.docker.com/engine/install/">Docker Engine ↗</a><a class="btn" target="_blank" rel="noopener" href="https://minepi.com/pi-blockchain/pi-node/linux/">Pi Linux Guide ↗</a></div></div>
+          </div>
+          <div class="notice warn">⚠️ Docker Desktop 的安裝畫面會依 Windows／macOS／Linux 版本不同而變化；請以 Docker 官方安裝文件為準。Pi Node 本身則以 Pi 官方 Node 文件與 App 內提示為優先。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="setup">
+      <div class="container">
+        <div class="section-head"><div><h2>02 · 架設流程</h2></div><p>按照順序完成。新版 Node 對 Port 設定更友善，但 Docker 與節點啟動仍是核心步驟。</p></div>
+        <div class="timeline">
+          <div class="step"><div class="step-num">1</div><div class="step-content"><h3>下載官方 Pi Desktop / Node</h3><p class="muted">只從 Pi Network 官方網站取得安裝檔。安裝完成後開啟 Pi Node 介面並登入。</p><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn-primary" target="_blank" rel="noopener" href="https://minepi.com/pi-node/">官方 Pi Node 頁面 ↗</a><a class="btn" target="_blank" rel="noopener" href="https://docs.docker.com/get-started/get-docker/">Docker 官方下載 ↗</a></div></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-content"><h3>依 Node App 提示完成初始化</h3><p class="muted">Node 會顯示需要完成的環境與容器設定。不要自行混用舊版教學中的 Docker 設定檔。</p></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-content"><h3>啟動 Node 與 Consensus Container</h3><p class="muted">確認 Node 開關已開啟，Docker Engine 正常運作，並觀察 Pi Node 的診斷資訊是否持續更新。</p><div class="notice success">✓ 你要看到的核心方向：Node 啟動、Docker 正常、區塊高度開始更新、網路連線逐漸建立。</div></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-content"><h3>設定 Port：先試 UPnP，再手動轉發</h3><p class="muted">Node 0.6.2 新增 UPnP 自動 Port 設定。支援的路由器可直接使用；若沒有成功，再進入路由器設定 Port Forwarding。</p></div></div>
+        </div>
+        <div class="card" style="margin-top:18px">
+          <span class="num">WINDOWS 安裝與首次登入補充</span>
+          <h3>從電腦準備到進入 Node 頁面</h3>
+          <p class="muted">以下補上圖文參考流程中容易略過的 Windows 與首次登入細節。Pi Node、Docker 版本更新後，畫面和按鈕名稱可能改變；請以目前官方安裝程式及 App 提示為準。</p>
+          <div class="substeps">
+            <div class="substep"><div class="step-num">1</div><div><h4>先確認 CPU 虛擬化已啟用</h4><p>在工作管理員的「效能 → CPU」查看虛擬化狀態。若未啟用，依主機板廠牌與型號查詢 BIOS/UEFI 設定並開啟 Intel VT-x 或 AMD-V。可在 CMD 執行 <span class="tag">wmic baseboard get product,Manufacturer</span> 查主機板資訊；新版本 Windows 若沒有 WMIC，可改用系統資訊或 PowerShell 查詢。</p></div></div>
+            <div class="substep"><div class="step-num">2</div><div><h4>安裝 Windows 虛擬化元件（安裝程式需要時）</h4><p>在 Windows 搜尋「開啟或關閉 Windows 功能」，啟用「適用於 Linux 的 Windows 子系統」與「虛擬機器平台」，按確定並依提示重新啟動。Docker Desktop 若提示安裝／更新 WSL，請照提示完成；舊版 WSL2 核心更新套件可由 <a href="https://aka.ms/wsl2kernel" target="_blank" rel="noopener">Microsoft 官方連結下載 ↗</a>。部分較新的 Windows 安裝流程會由 WSL 更新指令或安裝程式處理。</p></div></div>
+            <div class="substep"><div class="step-num">3</div><div><h4>完成 Docker 初次啟動</h4><p>依 Docker Desktop 安裝程式完成安裝。若安裝程式要求登出或重新啟動，照提示操作；首次開啟時接受服務條款並等待 Docker 啟動完成。若出現教學可略過，之後讓 Docker 在背景保持執行。Docker 狀態未正常前，先處理 Docker 顯示的錯誤再啟動節點。</p></div></div>
+            <div class="substep"><div class="step-num">4</div><div><h4>登入 Pi Node 並完成首次申請</h4><p>Node App 安裝完成後按「LOGIN」，依畫面產生的登入碼在手機 Pi App 輸入／確認。回到電腦端進入「Node」並按「APPLY」。首次設定若出現問卷，填完按「SUBMIT」；送出後按返回，再按「CONTINUE」繼續。</p></div></div>
+            <div class="substep"><div class="step-num">5</div><div><h4>確認 Docker 狀態，再啟動 Node</h4><p>若 Node 頁面的 Docker 狀態未顯示正常，先排除 Docker 問題。可展開「Open router ports」查看連接埠說明；完成準備後開啟 Node 中央開關。Pi Node 會依當前流程下載並啟動所需容器（常見名稱為 <span class="tag">pi-consensus</span>），初次下載可能需要等待。</p></div></div>
+            <div class="substep"><div class="step-num">6</div><div><h4>讓節點持續執行並查看同步進度</h4><p>節點開關保持開啟，視窗可縮小或關閉，App 仍可在背景執行；關閉開關會停止節點容器。區塊同步需要時間，可查看 <a href="https://yuanrui919.github.io/catchup/" target="_blank" rel="noopener">同步進度說明 ↗</a>。若新安裝後卡在啟動／轉圈畫面，先看 <a href="https://yuanrui919.github.io/circling/" target="_blank" rel="noopener">轉圈問題排除指南 ↗</a>，並核對其適用版本。</p></div></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <span class="num">PORT 測試注意事項</span>
+          <p class="muted">Port Checker 是檢查工具，不會替你設定 Windows 防火牆或路由器。參考流程提到的舊版「Check now」可能透過 Docker 建立 <span class="tag">stellar-dummy</span> 測試容器；若 Windows 防火牆詢問是否允許該工具，僅在你確定是由 Pi Node 啟動且信任來源時處理。不要同時執行 Port 測試容器與節點共識容器；完成測試後關閉測試，再啟動 Node。檢查結果受網路延遲影響，偶爾顯示未開不代表設定自動改變。Port 未開通常仍可執行普通節點，但可能無法符合需要對外連線的條件。也可用 <a href="https://pi-mods.de/nodeports/" target="_blank" rel="noopener">Pi Mods Port 測試頁 ↗</a>；請在執行 Node 的電腦上開啟，並以目前 Node App 的診斷結果為準。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="router">
+      <div class="container">
+        <div class="section-head"><div><h2>03 · 進入路由器後台</h2></div><p>不確定路由器在哪裡設定？先用 Windows 找到 Default Gateway，再把瀏覽器帶到路由器的管理頁面。</p></div>
+        <div class="router-guide">
+          <div class="card">
+            <span class="num">STEP-BY-STEP</span>
+            <div class="router-steps">
+              <div class="router-step"><div class="step-num">1</div><div><h3>開啟 Windows Terminal / CMD</h3><p class="muted">按 <span class="tag">Win + R</span> → 輸入 <span class="tag">cmd</span> → Enter。</p></div></div>
+              <div class="router-step"><div class="step-num">2</div><div><h3>查詢 Default Gateway</h3><p class="muted">輸入下面指令，找你目前網卡的 <b>Default Gateway</b>。</p><div class="gateway-box"><code>ipconfig</code><pre class="ipconfig-output" aria-label="ipconfig output example">Ethernet adapter Ethernet:<br><br>   Connection-specific DNS Suffix  . :<br>   Link-local IPv6 Address . . . . . : fe80::1f07:2eaa:156e:ea95%15<br>   IPv4 Address. . . . . . . . . . . : 192.168.213.100<br>   Subnet Mask . . . . . . . . . . . : 255.255.255.0<br><span class="gateway-line">   Default Gateway . . . . . . . . . . : <span class="gateway-value">192.168.213.1</span></span></pre></div><p class="small">The highlighted Default Gateway is an example. Find this line in your own ipconfig output and use its address; the IP shown above is illustrative.</p></div></div>
+              <div class="router-step"><div class="step-num">3</div><div><h3>在瀏覽器輸入 Gateway</h3><p class="muted">例如你的 Default Gateway 是 <span class="tag">192.168.213.1</span>，就在網址列輸入：</p><div class="gateway-box"><code>http://192.168.213.1</code></div></div></div>
+              <div class="router-step"><div class="step-num">4</div><div><h3>登入路由器管理介面</h3><p class="muted">輸入路由器管理帳號與密碼。帳密通常可在機身貼紙、ISP 文件、安裝資料或你自己設定的密碼管理工具中找到。</p><div class="notice warn">🔐 不要把路由器管理密碼、Wi‑Fi 密碼或公開 IP 貼到教學網站／截圖上。</div></div></div>
+              <div class="router-step"><div class="step-num">5</div><div><h3>尋找 Port Forwarding</h3><p class="muted">不同品牌名稱可能不同，常見關鍵字：</p><div class="mini-list"><div>Port Forwarding</div><div>Virtual Server</div><div>NAT Forwarding</div><div>NAT / Port Mapping</div></div></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <span class="num">WHERE NEXT?</span>
+            <h3>進入後台後，先不要亂改設定</h3>
+            <p class="muted">你真正要找的是「NAT／Port Forwarding」。通常不需要修改 WAN、DHCP、PPPoE 或其他進階網路設定。</p>
+            <div class="notice success">✓ 找到 Port Forwarding 後，再按照下一節建立 Pi Node 的規則。</div>
+            <div class="notice">💡 如果你的路由器由電信商提供，介面可能被整合在「Internet／網路／安全性／NAT」等頁面；名稱不同是正常的。</div>
+            <div class="notice warn">⚠️ 若登入後完全找不到 Port Forwarding，可能是 ISP 路由器功能被限制、你處於 Mesh／橋接模式，或使用 CGNAT。此時先不要隨便改 WAN 設定。</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="windows-firewall">
+      <div class="container">
+        <div class="section-head"><div><h2>Windows Defender Firewall</h2></div><p>若 Pi Node 的連線被 Windows 防火牆擋住，可建立入站規則允許節點連線。以下畫面是操作示意，Windows 版本不同時介面文字可能略有差異。</p></div>
+        <div class="card">
+          <span class="num">WINDOWS · INBOUND RULE</span>
+          <h3>新增 Pi Node 入站連接埠規則</h3>
+          <p class="muted">按 <span class="tag">Win + R</span>，輸入 <span class="tag">wf.msc</span> 開啟「Windows Defender 防火牆（進階安全性）」。以下依序在精靈中選擇設定。</p>
+          <div class="firewall-steps"><figure class="firewall-shot"><img src="assets/firewall-step-1-inbound-rules.png" alt="Windows Defender 防火牆進階安全性：選取輸入規則並點選新增規則"><figcaption><strong>1 · 開啟輸入規則</strong>在左側選取「輸入規則」，再從右側操作窗格點選「新增規則」。</figcaption></figure><figure class="firewall-shot"><img src="assets/firewall-step-2-rule-type.png" alt="新增輸入規則精靈：選擇連接埠規則類型"><figcaption><strong>2 · 選擇規則類型</strong>選取「連接埠」，再按「下一步」。</figcaption></figure><figure class="firewall-shot"><img src="assets/firewall-step-3-tcp-ports.png" alt="新增輸入規則精靈：選擇 TCP 並輸入本機連接埠 31400 到 31409"><figcaption><strong>3 · 設定 TCP 連接埠</strong>選擇 TCP，指定本機連接埠填入 31400-31409。</figcaption></figure><figure class="firewall-shot"><img src="assets/firewall-step-4-allow-connection.png" alt="新增輸入規則精靈：允許符合條件的連線"><figcaption><strong>4 · 允許連線</strong>選取「允許連線」，再按「下一步」繼續設定網路設定檔及規則名稱。</figcaption></figure></div><div class="notice warn">只開放 Pi Node 實際需要且被防火牆阻擋的連接埠。這組範例依本頁列出的 TCP 31400–31409；若 Pi Node App 顯示不同設定，請以 App 為準。Windows 入站規則只處理電腦本機防火牆，路由器的 Port Forwarding 是另一項設定；請勿為此關閉整個防火牆。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="ports">
+      <div class="container">
+        <div class="section-head"><div><h2>03 · Port 設定</h2></div><p>Pi 的歷史文件指出 Node 使用 31400–31409 這組 Port。新版 Node 另提供自動 Port 設定與 Port Checker。</p></div>
+        <div class="card wide">
+          <h3>需要確認的 Port 範圍</h3>
+          <div class="ports">
+            <div class="port">31400</div><div class="port">31401</div><div class="port">31402</div><div class="port">31403</div><div class="port">31404</div>
+            <div class="port">31405</div><div class="port">31406</div><div class="port">31407</div><div class="port">31408</div><div class="port">31409</div>
+          </div>
+          <div class="notice">網頁上的這組清單只是教學提示，不會從你的電腦實際掃描 Port。實際狀態請以 Pi Node App 的 Port Checker 為準。</div>
+        </div>
+        <div class="grid" style="margin-top:16px">
+          <div class="card"><span class="num">A · AUTO</span><h3>先開啟 UPnP</h3><p class="muted">如果路由器支援 UPnP，先讓 Node 自動嘗試設定需要的網路連通性。這是 0.6.2 新增的便利功能。</p></div>
+          <div class="card"><span class="num">B · MANUAL</span><h3>手動 Port Forwarding</h3><p class="muted">若 UPnP 不可用，進入路由器管理頁面，將需要的 Port 轉發到執行 Pi Node 的電腦區域網路 IP。歷史文件與 Node Checker 都以 31400–31409 為核心範圍。</p></div>
+          <div class="card"><span class="num">C · VERIFY</span><h3>回到 Node 檢查</h3><p class="muted">完成設定後，回到 Pi Node 的 Port Checker 重新檢查。外部 Port 狀態可能需要一些時間才會反映。</p></div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <span class="num">MANUAL EXAMPLE</span>
+          <h3>手動轉發規則怎麼填？</h3>
+          <p class="muted">假設你的 Pi Node 電腦在區網 IP <b>192.168.1.50</b>。以下只是示範格式；實際欄位名稱會依路由器品牌不同而不同。</p>
+          <div class="ports" style="margin-top:14px">
+            <div class="port ok">外部 31400</div><div class="port ok">～</div><div class="port ok">31409</div><div class="port">TCP</div><div class="port">→ 192.168.1.50</div>
+          </div>
+          <div class="notice">常見欄位：Service Name＝Pi Node、Protocol＝TCP（依你的路由器／Node 現行說明為準）、External Port／Internal Port＝31400–31409、Device／Internal IP＝你的 Pi Node 電腦 LAN IP。</div>
+          <div class="notice warn">⚠️ 不要照抄 <b>192.168.1.50</b>。一定要換成你自己電腦的 IPv4 Address；可在 <span class="tag">ipconfig</span> 中查看。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="check">
+      <div class="container">
+        <div class="section-head"><div><h2>04 · 開始前自我檢查</h2></div><p>把常見問題先排除，再進入長時間同步。</p></div>
+        <div class="card">
+          <div class="checklist">
+            <label class="check"><input type="checkbox"> <span>Pi Node 已安裝，且使用官方下載來源</span></label>
+            <label class="check"><input type="checkbox"> <span>Docker Engine / Docker Desktop 可正常啟動</span></label>
+            <label class="check"><input type="checkbox"> <span>Pi Node 的 Node switch 已開啟</span></label>
+            <label class="check"><input type="checkbox"> <span>Port Checker 已能取得檢查結果</span></label>
+            <label class="check"><input type="checkbox"> <span>電腦可穩定連網，沒有頻繁斷線或睡眠</span></label>
+            <label class="check"><input type="checkbox"> <span>開始同步後，給節點足夠時間追上區塊</span></label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="section-head"><div><h2>05 · 常見排錯</h2></div><p>先看現象，再判斷是 Port、Docker、同步或網路問題。</p></div>
+        <div class="faq">
+          <details><summary>Port 顯示沒有開，是不是 Node 一定不能跑？</summary><p>不一定。Port 狀態與節點對外連入能力有關；遇到問題時，先確認路由器、Windows 防火牆、UPnP 與實際 LAN IP，再看 Node App 的診斷資訊。</p></details>
+          <details><summary>Consensus Container 沒有跑起來怎麼辦？</summary><p>先確認 Docker Engine 正常運作，再重新啟動 Pi Node。若持續出現容器錯誤，記錄 Node App 的 Troubleshooting / Diagnostics 資訊，再依官方支援與 Wiki 進一步排查。</p></details>
+          <details><summary>一直顯示同步中，是壞掉了嗎？</summary><p>同步本身可能需要時間。先觀察 Local Block / Latest Block 是否有變化，以及 Incoming / Outgoing Connections 是否逐步建立。若長時間完全不變，再進一步查看網路與 Docker 狀態。</p></details>
+          <details><summary>下載 Node 時看到 Windows SmartScreen 警告怎麼辦？</summary><p>Pi 官方說明指出，新的網路下載軟體可能觸發 Microsoft Defender SmartScreen 提示；請先確認下載來源確實為 Pi Network 官方網站，再依你的 Windows 安全設定作決定。</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <strong style="color:var(--text)">Pi Node Setup Guide</strong>
+      <p>本網站為教學整理頁，不代表 Pi Network Core Team 官方文件。技術設定可能隨 Node 版本變更，實際操作請優先以最新官方文件與 Node App 提示為準。</p>
+      <div class="sources">官方來源：
+        <a target="_blank" rel="noopener" href="https://minepi.com/pi-node/">Pi Node</a> ·
+        <a target="_blank" rel="noopener" href="https://minepi.com/blog/pi-node-0-6-2/">Node 0.6.2 Release</a> ·
+        <a target="_blank" rel="noopener" href="https://minepi.com/white-paper/">Pi White Paper</a> ·
+        <a target="_blank" rel="noopener" href="https://support.help.minepi.com/wiki/spaces/WIKI/pages/36765758/How%2Bto%2BSet%2BUp%2Ba%2BNode">Community Wiki</a> ·
+        <a target="_blank" rel="noopener" href="https://docs.docker.com/get-started/get-docker/">Docker 官方文件</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const progress = document.getElementById('progress');
+    const updateProgress = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', updateProgress, {passive:true});
+    updateProgress();
+
+    document.querySelectorAll('.copy').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const target = document.querySelector(btn.dataset.copy);
+        if (!target) return;
+        try {
+          await navigator.clipboard.writeText(target.textContent.trim());
+          const old = btn.textContent;
+          btn.textContent = '已複製';
+          setTimeout(() => btn.textContent = old, 1200);
+        } catch {}
+      });
+    });
+  </script>
+</body>
+</html>

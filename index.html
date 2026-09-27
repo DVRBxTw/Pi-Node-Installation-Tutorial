@@ -23,7 +23,7 @@
       --radius:24px;
       --max:1180px;
     }
-    *{box-sizing:border-box;scroll-behavior:smooth}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}
     body{margin:0;background:
       radial-gradient(900px 500px at 75% -10%, rgba(246,183,60,.13), transparent 60%),
       radial-gradient(700px 450px at 10% 15%, rgba(107,168,255,.12), transparent 58%),
@@ -46,11 +46,11 @@
     .gradient{background:linear-gradient(90deg,#fff,#ffd77c 45%,#ff9d5b);-webkit-background-clip:text;background-clip:text;color:transparent}
     .hero p{font-size:18px;color:var(--muted);max-width:700px}
     .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
-    .btn{border:1px solid var(--line);padding:12px 17px;border-radius:14px;font-weight:800;display:inline-flex;align-items:center;gap:8px;transition:.2s transform,.2s background}
+    .btn{border:1px solid var(--line);padding:12px 17px;border-radius:14px;font-weight:800;display:inline-flex;align-items:center;gap:8px;transition:.2s transform,.2s background;position:relative;overflow:hidden}
     .btn:hover{transform:translateY(-2px);background:rgba(255,255,255,.06)}
     .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#261900;border:none}
     .hero-card{background:linear-gradient(180deg,rgba(26,46,73,.85),rgba(12,24,41,.86));border:1px solid var(--line);padding:25px;border-radius:var(--radius);box-shadow:var(--shadow);position:relative;overflow:hidden}
-    .hero-card:before{content:"";position:absolute;width:210px;height:210px;border-radius:50%;background:rgba(246,183,60,.14);filter:blur(30px);top:-90px;right:-60px}
+    .hero-card:before{content:"";position:absolute;width:210px;height:210px;border-radius:50%;background:rgba(246,183,60,.14);filter:blur(30px);top:-90px;right:-60px;animation:ambient-float 8s ease-in-out infinite alternate}
     .terminal{border-radius:18px;border:1px solid var(--line);background:#050b14;overflow:hidden}
     .terminal-top{padding:11px 14px;border-bottom:1px solid var(--line);display:flex;gap:7px}
     .dot{width:9px;height:9px;border-radius:50%;background:#45566e}.dot:nth-child(1){background:#ff7272}.dot:nth-child(2){background:#ffc861}.dot:nth-child(3){background:#55dfa0}
@@ -69,7 +69,7 @@
     .ports{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:18px}
     .port{padding:14px 10px;text-align:center;background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:14px;font:700 14px ui-monospace,monospace}
     .port.ok{border-color:rgba(83,224,160,.3);color:var(--green)}
-    .timeline{display:grid;gap:14px}.step{display:grid;grid-template-columns:46px 1fr;gap:14px;align-items:start}.step-num{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:rgba(246,183,60,.10);border:1px solid rgba(246,183,60,.25);color:#ffd67c;font-weight:900}
+    .timeline{display:grid;gap:14px}.step{display:grid;grid-template-columns:46px 1fr;gap:14px;align-items:start;position:relative}.step:not(:last-child):before{content:"";position:absolute;left:20px;top:44px;bottom:-14px;width:2px;background:linear-gradient(180deg,rgba(246,183,60,.46),rgba(107,168,255,.12));transform-origin:top;animation:timeline-flow 2.6s ease-in-out infinite alternate}.step-num{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:rgba(246,183,60,.10);border:1px solid rgba(246,183,60,.25);color:#ffd67c;font-weight:900;position:relative;z-index:1}
     .step-content{border:1px solid var(--line);background:var(--card);padding:17px 18px;border-radius:18px}.step-content h3{margin:0 0 4px}
     .faq details{border:1px solid var(--line);background:rgba(255,255,255,.03);border-radius:16px;padding:16px 18px}.faq details+details{margin-top:10px}.faq summary{cursor:pointer;font-weight:800}.faq p{color:var(--muted);margin-bottom:0}
     .footer{padding:38px 0 65px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);margin-top:35px}.sources a{text-decoration:underline;text-underline-offset:3px}
@@ -77,11 +77,16 @@
     .ipconfig-output{margin:0;overflow-x:auto;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:#0b0b0b;padding:14px 16px;color:#d7d7d7;font:13px/1.8 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}.ipconfig-output .gateway-line{display:block;margin:2px -6px;padding:1px 6px;border-radius:5px;background:rgba(246,183,60,.14);outline:1px solid rgba(246,183,60,.35);color:#ffe3a0;font-weight:800}.ipconfig-output .gateway-value{color:#ffd67d}
     .firewall-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:18px}.firewall-shot{margin:0;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:#111923}.firewall-shot img{display:block;width:100%;height:auto}.firewall-shot figcaption{padding:12px 14px;color:var(--muted);font-size:13px}.firewall-shot figcaption strong{display:block;color:var(--text);margin-bottom:4px}
     .substeps{display:grid;gap:12px;margin-top:18px}.substep{display:grid;grid-template-columns:34px 1fr;gap:11px;align-items:start}.substep .step-num{width:32px;height:32px;border-radius:10px;font-size:13px}.substep h4{margin:0 0 3px;font-size:15px}.substep p{margin:0;color:var(--muted)}
+    .command-box{margin-top:12px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:#050b14}.command-box strong{display:block;margin-bottom:7px;font-size:13px;color:#ffd67d}.command-box code{display:inline-block;overflow-x:auto;color:#dcecff;font:13px/1.7 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:nowrap}.command-box p{margin:8px 0 0;font-size:12px}.copy-command{display:inline-flex;align-items:center;justify-content:center;gap:6px;margin-left:10px;padding:6px 10px;border:1px solid rgba(246,183,60,.32);border-radius:9px;background:rgba(246,183,60,.09);color:#ffdc91;font-family:inherit;font-size:12px;font-weight:700;line-height:1.2;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}.copy-command:hover{background:rgba(246,183,60,.17);border-color:rgba(246,183,60,.56);transform:translateY(-1px)}.copy-command.inline{margin-left:6px;padding:4px 7px;font-size:11px}.copy-command:disabled{cursor:default;opacity:.8;transform:none}.copy-status{display:inline-block;margin-left:8px;color:var(--green);font-size:12px}
     .guide-shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px;margin-top:12px}.guide-shot{margin:0;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:#050b14}.guide-shot img{display:block;width:100%;height:220px;object-fit:contain;object-position:center;background:#101722;cursor:zoom-in}.guide-shot figcaption{padding:9px 12px;color:var(--muted);font-size:12px;line-height:1.5}
     .firewall-shot img{height:220px;object-fit:contain;background:#101722;cursor:zoom-in}
     .image-dialog{width:min(1100px,calc(100% - 28px));max-width:none;max-height:calc(100% - 28px);padding:44px 14px 14px;border:1px solid var(--line);border-radius:18px;background:#07111f;color:var(--text);box-shadow:var(--shadow)}.image-dialog::backdrop{background:rgba(0,0,0,.82);backdrop-filter:blur(5px)}.image-dialog img{display:block;max-width:100%;max-height:calc(100vh - 100px);margin:auto;object-fit:contain}.image-dialog-caption{padding:10px;text-align:center;color:var(--muted);font-size:13px}.image-dialog-close{position:absolute;right:12px;top:10px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.06);color:var(--text);padding:7px 11px;cursor:pointer}
     .copyright-note{margin:8px 0 0;text-align:center;font-size:12px;color:var(--muted)}
     .copyright{margin:22px 0 0;padding-top:16px;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:12px;letter-spacing:.03em}
+    @keyframes ambient-float{from{transform:translate3d(-8px,4px,0) scale(.92);opacity:.65}to{transform:translate3d(14px,-12px,0) scale(1.08);opacity:1}}
+    @keyframes timeline-flow{from{opacity:.42;transform:scaleY(.82)}to{opacity:.9;transform:scaleY(1)}}
+    @keyframes button-sheen{from{transform:translateX(-140%) skewX(-18deg)}to{transform:translateX(240%) skewX(-18deg)}}
+    .btn-primary:after{content:"";position:absolute;inset:-30% auto -30% -55%;width:34%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.42),transparent);transform:translateX(-140%) skewX(-18deg);pointer-events:none}
     .card,.step-content,.download-card,.router-step,.faq details,.guide-shot{transition:transform .24s ease,border-color .24s ease,box-shadow .24s ease,background-color .24s ease}
     .step-num{transition:transform .24s ease,box-shadow .24s ease}
     @media(hover:hover) and (prefers-reduced-motion:no-preference){
@@ -89,11 +94,13 @@
       .step:hover .step-num,.router-step:hover .step-num{transform:scale(1.08) rotate(-3deg);box-shadow:0 5px 18px rgba(246,183,60,.2)}
       .guide-shot img{transition:transform .35s ease}
       .guide-shot:hover img{transform:scale(1.025)}
+      .btn-primary:hover:after,.btn-primary:focus-visible:after{animation:button-sheen .7s ease}
     }
-    @media(prefers-reduced-motion:reduce){.card,.step-content,.download-card,.router-step,.faq details,.guide-shot,.step-num,.guide-shot img{transition:none!important;scroll-behavior:auto!important}}
+    @media(prefers-reduced-motion:no-preference){.motion-ready .reveal{opacity:0;transform:translateY(20px) scale(.99);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);transition-delay:var(--reveal-delay,0ms)}.motion-ready .reveal.is-visible{opacity:1;transform:translateY(0) scale(1)}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.progress{transition:none!important}.card,.step-content,.download-card,.router-step,.faq details,.guide-shot,.step-num,.guide-shot img{transition:none!important}.hero-card:before,.step:not(:last-child):before,.btn-primary:after{animation:none!important}}
     @media(max-width:900px){.download-grid,.router-guide{grid-template-columns:1fr 1fr}}
     @media(max-width:640px){.download-grid,.router-guide,.firewall-steps{grid-template-columns:1fr}}
-    .progress-wrap{position:fixed;left:0;top:0;width:100%;height:3px;z-index:100;background:transparent}.progress{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+    .progress-wrap{position:fixed;left:0;top:0;width:100%;height:3px;z-index:100;background:transparent}.progress{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));box-shadow:0 0 14px rgba(246,183,60,.5);transition:width .12s ease-out}
     @media(max-width:900px){.hero-grid{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}.ports{grid-template-columns:repeat(3,1fr)}.nav-toggle{display:inline-flex;align-items:center;gap:8px}.nav-links{display:none;position:absolute;top:calc(100% + 8px);right:0;left:0;padding:12px;flex-direction:column;gap:4px;border:1px solid var(--line);border-radius:16px;background:rgba(7,17,31,.97);box-shadow:var(--shadow)}.nav-links.is-open{display:flex}.nav-links a{padding:10px 12px;border-radius:10px}.nav-links a:hover{background:rgba(255,255,255,.06)}}
     @media(max-width:640px){.container{width:min(100% - 24px,var(--max))}.hero{padding-top:56px}.grid{grid-template-columns:1fr}.ports{grid-template-columns:repeat(2,1fr)}h1{font-size:48px}.section-head{display:block}.section-head p{margin-top:8px}}
   </style>
@@ -175,8 +182,8 @@ Port           ● 以 App 檢查
           <h3>從電腦準備到進入 Node 頁面</h3>
           <p class="muted">以下補上 Windows 與首次登入細節。配圖取自<a href="https://yuanrui919.github.io/installnode/" target="_blank" rel="noopener">參考安裝教學 ↗</a>；部分是 Windows 10 與舊版 Pi Desktop 畫面，只作位置示意。介面可能更新，請以目前 Pi Desktop 與官方安裝提示為準。</p>
           <div class="substeps">
-            <div class="substep"><div class="step-num">1</div><div><h4>先確認 CPU 虛擬化已啟用</h4><p>在工作管理員的「效能 → CPU」查看虛擬化狀態。若未啟用，依主機板廠牌與型號查詢 BIOS/UEFI 設定並開啟 Intel VT-x 或 AMD-V。可在 CMD 執行 <span class="tag">wmic baseboard get product,Manufacturer</span> 查主機板資訊；新版本 Windows 若沒有 WMIC，可改用系統資訊或 PowerShell 查詢。</p><div class="guide-shots"><figure class="guide-shot"><img src="assets/reference-install/virtualization-task-manager-current.png" alt="Windows 11 工作管理員效能頁面，CPU 區域顯示虛擬化已啟用" loading="lazy"><figcaption>你的工作管理員畫面：在「效能 → CPU」右下方確認「虛擬化：已啟用」。</figcaption></figure><figure class="guide-shot"><img src="assets/reference-install/virtualization-bios-example.png" alt="主機板 BIOS 虛擬化設定示意" loading="lazy"><figcaption>BIOS/UEFI 設定因主機板廠牌不同而異，這張圖僅示範虛擬化選項位置。</figcaption></figure></div></div></div>
-            <div class="substep"><div class="step-num">2</div><div><h4>安裝 Windows 虛擬化元件（安裝程式需要時）</h4><p>在 Windows 搜尋「開啟或關閉 Windows 功能」，啟用「適用於 Linux 的 Windows 子系統」與「虛擬機器平台」，按確定並依提示重新啟動。Docker Desktop 若提示安裝／更新 WSL，請照提示完成；舊版 WSL2 核心更新套件可由 <a href="https://aka.ms/wsl2kernel" target="_blank" rel="noopener">Microsoft 官方連結下載 ↗</a>。部分較新的 Windows 安裝流程會由 WSL 更新指令或安裝程式處理。</p><div class="guide-shots"><figure class="guide-shot"><img src="assets/reference-install/windows-features-wsl.png" alt="Windows 功能中勾選適用於 Linux 的 Windows 子系統和虛擬機器平台" loading="lazy"><figcaption>舊版 Windows 功能清單的 WSL 與虛擬機器平台選項位置。</figcaption></figure></div></div></div>
+            <div class="substep"><div class="step-num">1</div><div><h4>先確認 CPU 虛擬化已啟用</h4><p>在工作管理員的「效能 → CPU」查看虛擬化狀態。若未啟用，依主機板廠牌與型號查詢 BIOS/UEFI 設定並開啟 Intel VT-x 或 AMD-V。可在 CMD 執行 <span class="tag copyable-command">wmic baseboard get product,Manufacturer</span> 查主機板資訊；新版本 Windows 若沒有 WMIC，可改用系統資訊或 PowerShell 查詢。</p><div class="guide-shots"><figure class="guide-shot"><img src="assets/reference-install/virtualization-task-manager-current.png" alt="Windows 11 工作管理員效能頁面，CPU 區域顯示虛擬化已啟用" loading="lazy"><figcaption>你的工作管理員畫面：在「效能 → CPU」右下方確認「虛擬化：已啟用」。</figcaption></figure><figure class="guide-shot"><img src="assets/reference-install/virtualization-bios-example.png" alt="主機板 BIOS 虛擬化設定示意" loading="lazy"><figcaption>BIOS/UEFI 設定因主機板廠牌不同而異，這張圖僅示範虛擬化選項位置。</figcaption></figure></div></div></div>
+            <div class="substep"><div class="step-num">2</div><div><h4>安裝並更新 WSL 2</h4><p>在 Windows 搜尋「開啟或關閉 Windows 功能」，啟用「適用於 Linux 的 Windows 子系統」與「虛擬機器平台」，按確定並依提示重新啟動。Docker Desktop 若提示安裝／更新 WSL，請照提示完成。新版 WSL 可在 PowerShell 執行更新指令；若使用舊版 WSL 或系統要求安裝核心套件，從 Microsoft 官方頁面下載與電腦架構相符的 x64 或 ARM64 套件，執行安裝程式並按 Finish 完成。</p><div class="guide-shots"><figure class="guide-shot"><img src="assets/reference-install/windows-features-wsl.png" alt="Windows 功能中勾選適用於 Linux 的 Windows 子系統和虛擬機器平台" loading="lazy"><figcaption>舊版 Windows 功能清單的 WSL 與虛擬機器平台選項位置。</figcaption></figure></div><div class="command-box"><strong>新版 WSL：檢查並更新核心</strong><code>wsl --update</code><p>在 PowerShell 或 CMD 執行；若系統提示重新啟動，請先重新啟動電腦。</p></div><div class="command-box"><strong>舊版 WSL：手動安裝 Linux 核心更新套件</strong><a class="btn" style="margin:0 0 8px" href="https://learn.microsoft.com/windows/wsl/install-manual" target="_blank" rel="noopener">Microsoft 手動安裝說明 ↗</a><p>從 Microsoft 說明頁選擇與 Windows 架構相符的 WSL2 核心更新套件（x64 或 ARM64），下載後執行 MSI 並完成安裝。不要只依照檔名猜架構。</p><p>舊版 x64 套件直連：<a href="https://aka.ms/wsl2kernel" target="_blank" rel="noopener">aka.ms/wsl2kernel ↗</a></p></div><div class="command-box"><strong>將 WSL 2 設為新 Linux 發行版的預設版本</strong><code>wsl --set-default-version 2</code><p>在 Windows PowerShell 或 CMD 執行，不是在 Linux/WSL 終端機執行。此設定只影響之後新安裝的 Linux 發行版；已安裝的發行版需另外轉換。</p></div><p class="small" style="margin-top:10px">Microsoft 目前建議使用新版 WSL 更新方式；手動 MSI 是舊版或安裝程式要求時的替代流程。若不確定架構，可在「設定 → 系統 → 關於」查看系統類型。<a href="https://learn.microsoft.com/windows/wsl/basic-commands" target="_blank" rel="noopener">WSL 指令說明 ↗</a></p></div></div>
             <div class="substep"><div class="step-num">3</div><div><h4>完成 Docker 初次啟動</h4><p>依 Docker Desktop 安裝程式完成安裝。若安裝程式要求登出或重新啟動，照提示操作；首次開啟時接受服務條款並等待 Docker 啟動完成。若出現教學可略過，之後讓 Docker 在背景保持執行。Docker 狀態未正常前，先處理 Docker 顯示的錯誤再啟動節點。</p><div class="guide-shots"><figure class="guide-shot"><img src="assets/reference-install/docker-installer-start.png" alt="Docker Desktop 安裝設定畫面與確認按鈕" loading="lazy"><figcaption>安裝選項依 Windows 版本而異；確認安裝程式提示後繼續。</figcaption></figure><figure class="guide-shot"><img src="assets/reference-install/docker-log-out.png" alt="Docker 安裝完成後提示登出 Windows" loading="lazy"><figcaption>若安裝程式要求登出，儲存工作後登出並重新登入。</figcaption></figure><figure class="guide-shot"><img src="assets/reference-install/docker-terms.png" alt="Docker Desktop 首次啟動服務條款畫面" loading="lazy"><figcaption>首次啟動 Docker Desktop 時依畫面接受服務條款並等待啟動。</figcaption></figure></div></div></div>
             <div class="substep"><div class="step-num">4</div><div><h4>登入 Pi Desktop 並完成首次申請</h4><p>Pi Desktop 安裝完成後按「LOGIN」，依畫面產生的登入碼在手機 Pi App 輸入／確認。回到電腦端進入「Node」並按「APPLY」。首次設定若出現問卷，填完按「SUBMIT」；送出後按返回，再按「CONTINUE」繼續。登入碼是個人登入憑證，請勿分享或截圖公開。</p><div class="guide-shots"><figure class="guide-shot"><img src="assets/reference-install/pi-node-login.png" alt="Pi Desktop 歡迎頁面的登入按鈕" loading="lazy"><figcaption>Pi Desktop 歡迎頁面按「LOGIN」開始登入。</figcaption></figure><figure class="guide-shot"><img src="assets/reference-install/pi-node-tab.png" alt="Pi App 畫面中 Node 入口的位置" loading="lazy"><figcaption>已登入後，在 Pi App 中開啟 Node 頁面。</figcaption></figure><figure class="guide-shot"><img src="assets/reference-install/pi-node-apply.png" alt="Pi Desktop Node 申請頁面的 APPLY 按鈕" loading="lazy"><figcaption>Node 申請頁按「APPLY」；是否出現問卷依帳號狀態而定。</figcaption></figure></div></div></div>
             <div class="substep"><div class="step-num">5</div><div><h4>確認 Docker 狀態，再啟動 Node</h4><p>若 Node 頁面的 Docker 狀態未顯示正常，先排除 Docker 問題。依 App 顯示的步驟處理連線設定，再開啟 Node 主開關。Pi Desktop 會依目前流程啟動所需容器；舊版畫面曾使用 <span class="tag">pi-consensus</span> 名稱，實際狀態與容器名稱請以目前 App 為準。</p><div class="guide-shots"><figure class="guide-shot"><img src="assets/reference-install/pi-node-docker-status.png" alt="Pi Desktop 舊版技術準備頁顯示 Docker 狀態與 Port 設定" loading="lazy"><figcaption>舊版準備頁位置示意；目前請依 App 顯示的連線與 Port 設定操作。</figcaption></figure><figure class="guide-shot"><img src="assets/reference-install/pi-node-switch.png" alt="Pi Desktop 舊版 Node 主開關位置示意" loading="lazy"><figcaption>舊版 Node 開關位置示意；依目前 App 的 Node 頁面操作。</figcaption></figure><figure class="guide-shot"><img src="assets/reference-install/pi-node-consensus-container.png" alt="Docker Desktop 舊版容器清單中的 pi-consensus" loading="lazy"><figcaption>舊版 Docker Desktop 容器名稱示例，不應據此判斷目前容器狀態。</figcaption></figure></div></div></div>
@@ -198,7 +205,7 @@ Port           ● 以 App 檢查
             <span class="num">STEP-BY-STEP</span>
             <div class="router-steps">
               <div class="router-step"><div class="step-num">1</div><div><h3>開啟 Windows Terminal / CMD</h3><p class="muted">按 <span class="tag">Win + R</span> → 輸入 <span class="tag">cmd</span> → Enter。</p></div></div>
-              <div class="router-step"><div class="step-num">2</div><div><h3>查詢 Default Gateway</h3><p class="muted">輸入下面指令，找你目前網卡的 <b>Default Gateway</b>。</p><div class="gateway-box"><code>ipconfig</code><pre class="ipconfig-output" aria-label="ipconfig output example">Ethernet adapter Ethernet:<br><br>   Connection-specific DNS Suffix  . :<br>   Link-local IPv6 Address . . . . . : fe80::1f07:2eaa:156e:ea95%15<br>   IPv4 Address. . . . . . . . . . . : 192.168.213.100<br>   Subnet Mask . . . . . . . . . . . : 255.255.255.0<br><span class="gateway-line">   Default Gateway . . . . . . . . . . : <span class="gateway-value">192.168.213.1</span></span></pre></div><p class="small">The highlighted Default Gateway is an example. Find this line in your own ipconfig output and use its address; the IP shown above is illustrative.</p></div></div>
+              <div class="router-step"><div class="step-num">2</div><div><h3>查詢 Default Gateway</h3><p class="muted">輸入下面指令，找你目前網卡的 <b>Default Gateway</b>。</p><div class="gateway-box"><code class="copyable-command">ipconfig</code><pre class="ipconfig-output" aria-label="ipconfig output example">Ethernet adapter Ethernet:<br><br>   Connection-specific DNS Suffix  . :<br>   Link-local IPv6 Address . . . . . : fe80::1f07:2eaa:156e:ea95%15<br>   IPv4 Address. . . . . . . . . . . : 192.168.213.100<br>   Subnet Mask . . . . . . . . . . . : 255.255.255.0<br><span class="gateway-line">   Default Gateway . . . . . . . . . . : <span class="gateway-value">192.168.213.1</span></span></pre></div><p class="small">The highlighted Default Gateway is an example. Find this line in your own ipconfig output and use its address; the IP shown above is illustrative.</p></div></div>
               <div class="router-step"><div class="step-num">3</div><div><h3>在瀏覽器輸入 Gateway</h3><p class="muted">例如你的 Default Gateway 是 <span class="tag">192.168.213.1</span>，就在網址列輸入：</p><div class="gateway-box"><code>http://192.168.213.1</code></div></div></div>
               <div class="router-step"><div class="step-num">4</div><div><h3>登入路由器管理介面</h3><p class="muted">輸入路由器管理帳號與密碼。帳密通常可在機身貼紙、ISP 文件、安裝資料或你自己設定的密碼管理工具中找到。</p><div class="notice warn">🔐 不要把路由器管理密碼、Wi‑Fi 密碼或公開 IP 貼到教學網站／截圖上。</div></div></div>
               <div class="router-step"><div class="step-num">5</div><div><h3>尋找 Port Forwarding</h3><p class="muted">不同品牌名稱可能不同，常見關鍵字：</p><div class="mini-list"><div>Port Forwarding</div><div>Virtual Server</div><div>NAT Forwarding</div><div>NAT / Port Mapping</div></div></div></div>
@@ -316,6 +323,30 @@ Port           ● 以 App 檢查
     window.addEventListener('scroll', updateProgress, {passive:true});
     updateProgress();
 
+    if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+      const revealSelector = '.hero-grid > div, .section-head, .grid > .card, .download-grid > .download-card, .timeline > .step, .substeps > .substep, .router-steps > .router-step, .guide-shots > .guide-shot, .firewall-steps > .firewall-shot, .faq details';
+      const targets = [...document.querySelectorAll(revealSelector)];
+      const groups = new Map();
+      targets.forEach(target => {
+        target.classList.add('reveal');
+        const siblings = groups.get(target.parentElement) || [];
+        siblings.push(target);
+        groups.set(target.parentElement, siblings);
+      });
+      groups.forEach(siblings => siblings.forEach((target, index) => {
+        target.style.setProperty('--reveal-delay', `${Math.min(index, 4) * 75}ms`);
+      }));
+      document.body.classList.add('motion-ready');
+      const revealObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        });
+      }, {threshold:0.12, rootMargin:'0px 0px -28px 0px'});
+      targets.forEach(target => revealObserver.observe(target));
+    }
+
     const navToggle = document.getElementById('nav-toggle');
     const navLinks = document.getElementById('nav-links');
     const closeNav = () => {
@@ -355,6 +386,45 @@ Port           ● 以 App 檢查
       if (event.target === imageDialog) imageDialog.close();
     });
     document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
+    const copyText = async value => {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(value);
+        return;
+      }
+      const field = document.createElement('textarea');
+      field.value = value;
+      field.setAttribute('readonly', '');
+      field.style.position = 'fixed';
+      field.style.opacity = '0';
+      document.body.appendChild(field);
+      field.select();
+      const copied = document.execCommand('copy');
+      field.remove();
+      if (!copied) throw new Error('Clipboard copy failed');
+    };
+    document.querySelectorAll('.command-box code, .copyable-command').forEach(target => {
+      const button = document.createElement('button');
+      button.className = `copy-command${target.classList.contains('copyable-command') ? ' inline' : ''}`;
+      button.type = 'button';
+      button.textContent = '複製指令';
+      button.setAttribute('aria-label', `複製指令：${target.textContent.trim()}`);
+      const status = document.createElement('span');
+      status.className = 'copy-status';
+      status.setAttribute('aria-live', 'polite');
+      target.insertAdjacentElement('afterend', button);
+      button.insertAdjacentElement('afterend', status);
+      button.addEventListener('click', async () => {
+        try {
+          await copyText(target.textContent.trim());
+          button.textContent = '已複製 ✓';
+          status.textContent = '已複製到剪貼簿';
+          window.setTimeout(() => { button.textContent = '複製指令'; status.textContent = ''; }, 1800);
+        } catch {
+          status.textContent = '複製失敗，請手動選取指令';
+        }
+      });
+    });
   </script>
 </body>
 </html>
